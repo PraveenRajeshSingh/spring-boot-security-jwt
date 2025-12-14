@@ -29,7 +29,7 @@ public class SecurityConfig {
 
     public static final String[] PUBLIC_URLS = {
             "/auth/**",
-            // Swagger / OpenAPI
+            "/v3/api-docs",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
@@ -46,18 +46,13 @@ public class SecurityConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-            CustomUserDetailService customUserDetailService,
-            JwtAuthenticationFilter jwtAuthenticationFilter,
-            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-            PasswordEncoder passwordEncoder) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/getUserDetails").hasRole("ADMIN")
                         .requestMatchers(PUBLIC_URLS).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/v3/api-docs", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint))
@@ -65,11 +60,6 @@ public class SecurityConfig {
 
         // Add JWT filter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // Register DaoAuthenticationProvider with constructor injection
-        DaoAuthenticationProvider daoProvider = new DaoAuthenticationProvider(customUserDetailService);
-        daoProvider.setPasswordEncoder(passwordEncoder);
-        http.authenticationProvider(daoProvider);
 
         return http.build();
     }
@@ -80,14 +70,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(CustomUserDetailService userDetailsService,
-            PasswordEncoder passwordEncoder) {
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
 
         // Pass UserDetailsService in the constructor
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailService);
 
         // Set PasswordEncoder
-        provider.setPasswordEncoder(passwordEncoder);
+        provider.setPasswordEncoder(passwordEncoder());
 
         return provider;
     }

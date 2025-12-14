@@ -17,6 +17,7 @@ A Spring Boot application demonstrating JWT (JSON Web Token) based authenticatio
 - [Running the Application](#running-the-application)
 - [Testing the APIs](#testing-the-apis)
 - [Swagger Documentation](#swagger-documentation)
+- [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -212,6 +213,49 @@ curl -X POST http://localhost:8081/api/auth/getUserDetails \
 API documentation is available through Swagger UI:
 - URL: http://localhost:8081/api/swagger-ui/index.html
 - API Docs: http://localhost:8081/api/v3/api-docs
+
+Note: If you encounter a 401 error when accessing Swagger UI, ensure that:
+1. The `springdoc.api-docs.enabled` property is set to `true` in `application.properties`
+2. The Swagger endpoints are properly configured in the security configuration as public URLs
+
+## Troubleshooting
+
+### Swagger UI 401 Error
+
+If you encounter a 401 error when accessing the Swagger UI, check the following:
+
+1. Ensure `springdoc.api-docs.enabled=true` in [application.properties](src/main/resources/application.properties)
+2. Verify that Swagger endpoints are included in the `PUBLIC_URLS` array in [SecurityConfig.java](src/main/java/com/springsecurity/spring_boot_security_jwt/config/SecurityConfig.java):
+   ```java
+   public static final String[] PUBLIC_URLS = {
+       "/auth/**",
+       "/v3/api-docs",
+       "/v3/api-docs/**",
+       "/swagger-ui/**",
+       "/swagger-ui.html",
+       "/swagger-resources/**",
+       "/webjars/**"
+   };
+   ```
+3. Confirm that the [JwtAuthenticationFilter.java](src/main/java/com/springsecurity/spring_boot_security_jwt/jwt/JwtAuthenticationFilter.java) skips filtering for Swagger paths:
+   ```java
+   // Skip JWT filtering for Swagger UI and API docs paths
+   String requestURI = request.getRequestURI();
+   if (requestURI.contains("/v3/api-docs") || requestURI.contains("/swagger-ui")) {
+       filterChain.doFilter(request, response);
+       return;
+   }
+   ```
+
+### Common Issues
+
+1. **Database Connection**: Ensure MySQL is running and the database credentials in `application.properties` are correct.
+2. **Port Conflicts**: If port 8081 is in use, change the `server.port` value in `application.properties`.
+3. **JWT Secret Key**: The default secret key should be Base64 encoded. Generate a new one if needed.
+4. **Swagger Path Issues**: Make sure the Swagger UI path is correctly configured in `application.properties`:
+   ```properties
+   springdoc.swagger-ui.path=/swagger-ui/index.html
+   ```
 
 ## Contributing
 

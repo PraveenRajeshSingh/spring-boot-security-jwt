@@ -32,6 +32,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
+        
+        // Skip JWT filtering for Swagger UI and API docs paths
+        String requestURI = request.getRequestURI();
+        if (requestURI.contains("/v3/api-docs") || requestURI.contains("/swagger-ui")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         // Filter logic will be implemented here
         String authHeader = request.getHeader("Authorization");
 
@@ -53,17 +61,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 username = jwtTokenHelper.getUsernameFromToken(token);
             } catch (IllegalArgumentException e) {
-                // log.info("Unable to get JWT Token");
+                log.info("Unable to get JWT Token");
 
             } catch (ExpiredJwtException e) {
-                // log.info("Jwt Token has Expired");
+                log.info("Jwt Token has Expired");
             } catch (MalformedJwtException e) {
-                // log.info("Invalid JWT Token");
+                log.info("Invalid JWT Token");
 
             }
 
         } else {
-            // log.info("JWT Token does not begin with Bearer..!");
+            log.info("JWT Token does not begin with Bearer..!");
         }
         // once we get the token , now validate
 
@@ -80,10 +88,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
             } else {
-                // log.info("Invalid Jwt Token..!");
+                log.info("Invalid Jwt Token..!");
             }
         } else {
-            // log.info("Username is null or context is null..!");
+            log.info("Username is null or context is null..!");
         }
 
         filterChain.doFilter(request, response);
