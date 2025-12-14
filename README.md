@@ -40,14 +40,14 @@ This project demonstrates a complete implementation of JWT-based authentication 
 ## Technologies Used
 
 - Java 17
-- Spring Boot 4.0.0
+- Spring Boot 3.2.0
 - Spring Security
 - Spring Data JPA
 - MySQL Database
 - JWT (JSON Web Tokens) - jjwt 0.11.5
 - Maven
 - Lombok
-- SpringDoc OpenAPI (Swagger UI)
+- SpringDoc OpenAPI 2.2.0 (Swagger UI)
 
 ## Project Structure
 
