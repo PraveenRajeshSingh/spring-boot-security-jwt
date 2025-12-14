@@ -256,6 +256,9 @@ If you encounter a 401 error when accessing the Swagger UI, check the following:
    ```properties
    springdoc.swagger-ui.path=/swagger-ui/index.html
    ```
+5. **Version Compatibility**: Ensure you're using compatible versions of Spring Boot and SpringDoc OpenAPI:
+   - Spring Boot 3.2.0
+   - SpringDoc OpenAPI 2.2.0
 
 ## Contributing
 

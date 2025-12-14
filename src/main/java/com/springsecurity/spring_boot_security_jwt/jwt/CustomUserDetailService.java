@@ -1,6 +1,9 @@
 package com.springsecurity.spring_boot_security_jwt.jwt;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,13 +27,10 @@ public class CustomUserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException("User Not Found..!");
         }
 
-        // return org.springframework.security.core.userdetails.User
-        // .withUsername(user.getEmail())
-        // .password(user.getPassword())
-        // .authorities(Collections.singleton(new
-        // SimpleGrantedAuthority("ROLE_" + user.getRoleId().getRoleName())))
-        // .build();
-
-        return user;
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPassword())
+                .authorities(Collections.singleton(new SimpleGrantedAuthority(user.getRoleId().getRoleName())))
+                .build();
     }
 }
