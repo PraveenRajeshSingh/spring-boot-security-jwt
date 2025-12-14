@@ -9,11 +9,10 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
-@OpenAPIDefinition(security = @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "JWT"))
+@OpenAPIDefinition
 public class SwaggerConfig {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
@@ -29,8 +28,7 @@ public class SwaggerConfig {
                                         .name(AUTHORIZATION_HEADER)
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
-                                        .bearerFormat("JWT")))
-                .addSecurityItem(new SecurityRequirement().addList("JWT"));
+                                        .bearerFormat("JWT")));
     }
 
     private Info apiInfo() {

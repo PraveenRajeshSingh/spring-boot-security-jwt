@@ -32,7 +32,7 @@ public class SecurityConfig {
             // Swagger / OpenAPI
             "/v3/api-docs/**",
             "/swagger-ui/**",
-            "/swagger-ui/index.html",
+            "/swagger-ui.html",
             "/swagger-resources/**",
             "/webjars/**" };
 
@@ -57,8 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/getUserDetails").hasRole("ADMIN")
                         .requestMatchers(PUBLIC_URLS).permitAll()
-                        // .requestMatchers(HttpMethod.GET, "/**").permitAll()
-
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint))
